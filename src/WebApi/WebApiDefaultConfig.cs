@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Rewrite;
+﻿using GamingApi.Repository.Interfaces;
+using GamingApi.Repository;
+using GamingApi.Service.Interfaces;
+using GamingApi.Service;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 

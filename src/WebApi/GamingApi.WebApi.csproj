@@ -16,6 +16,10 @@
 	    <DocumentationFile>YldGamingApi.xml</DocumentationFile>
 	</PropertyGroup>	
     <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    </ItemGroup>	
+    <ItemGroup>
+      <ProjectReference Include="..\Services\GamingApi.Service.csproj" />
     </ItemGroup>  
 </Project>

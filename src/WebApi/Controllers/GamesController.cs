@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using GamingApi.Common.DTO;
+using GamingApi.Service.Interfaces;
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Yld.GamingApi.WebApi.Controllers;
 
@@ -7,8 +11,32 @@ namespace Yld.GamingApi.WebApi.Controllers;
 [Produces("application/json")]
 public sealed class GamesController : ControllerBase
 {
-    /*
-     * Add the new endpoint HERE
-     * You can delete this comment afterward
-     */
+    private readonly IMapper _mapper;
+
+    private readonly IGameService _gameService;
+
+    public GamesController(IMapper mapper,
+        IGameService gameService)
+    {
+        _mapper = mapper;
+        _gameService = gameService;
+    }
+
+    // GET: api/<GamesController>
+    [HttpGet]
+    public async Task<IActionResult> Get(int offset, int limit)
+    {
+        var gamesFromFeed = await _gameService.GetGamesFromFeed(offset, limit);
+
+        var arrayToReturn = _mapper
+            .Map<GameResponseDTO[]>(gamesFromFeed);
+
+        return new JsonResult(
+            new { items = arrayToReturn },
+            new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IncludeFields = true
+            });
+    }
 }
