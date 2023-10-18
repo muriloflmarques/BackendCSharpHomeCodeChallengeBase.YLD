@@ -20,6 +20,30 @@ namespace GamingApi.Repository
             _steamGamesRepository = steamGamesRepository;
         }
 
+        private void OrderSteamGamesResponseDTO(
+            ref SteamGamesResponseDTO[] steamGamesResponseDTOs)
+        {
+            steamGamesResponseDTOs = steamGamesResponseDTOs
+                    ?.OrderByDescending(steamGame => steamGame.ReleaseDate)
+                    ?.ToArray()
+                    ??
+                    Array.Empty<SteamGamesResponseDTO>();
+        }
+        private void GetSteamGamesResponseDTOOffSetWithLimit(
+            ref SteamGamesResponseDTO[] steamGamesResponseDTOs, in int offset, in int limit)
+        {
+            steamGamesResponseDTOs = steamGamesResponseDTOs
+                ?.Skip(offset)
+                ?.Take(limit)
+                ?.ToArray()
+                ??
+                Array.Empty<SteamGamesResponseDTO>();
+        }
+
+        private Game[] MapSteamGamesResponseDTOToGame(
+            ref SteamGamesResponseDTO[] steamGamesResponseDTOs) =>
+            _mapper.Map<Game[]>(steamGamesResponseDTOs);
+
         public async Task<Game[]> GetGamesFromFeed(int offset, int limit)
         {
             var gamesToReturn = Array.Empty<Game>();
@@ -29,13 +53,16 @@ namespace GamingApi.Repository
                 var rawArrayOfSteamGames = await this._steamGamesRepository
                     .GetAllSteamGames();
 
-                rawArrayOfSteamGames = rawArrayOfSteamGames
-                    ?.OrderByDescending(steamGame => steamGame.ReleaseDate)
-                    ?.Skip(offset)
-                    ?.Take(limit)
-                    ?.ToArray()
-                    ??
-                    Array.Empty<SteamGamesResponseDTO>();
+                this.OrderSteamGamesResponseDTO(
+                    ref rawArrayOfSteamGames
+                    );
+
+                this.GetSteamGamesResponseDTOOffSetWithLimit(
+                    ref rawArrayOfSteamGames,
+                    offset: offset,
+                    limit: limit
+                    );
+
 #if DEBUG
                 foreach (var steamGame in rawArrayOfSteamGames)
                 {
@@ -48,7 +75,7 @@ namespace GamingApi.Repository
                             }));
                 }
 #endif
-                gamesToReturn = _mapper.Map<Game[]>(rawArrayOfSteamGames)
+                gamesToReturn = MapSteamGamesResponseDTOToGame(ref rawArrayOfSteamGames)
                     ??
                     gamesToReturn;
             }

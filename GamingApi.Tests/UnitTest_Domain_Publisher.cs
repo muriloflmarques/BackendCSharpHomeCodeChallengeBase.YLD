@@ -9,6 +9,8 @@ namespace GamingApi.Tests
         [SetUp]
         public void Setup()
         {
+            //Only testing the Domain area
+            //I think it might be enough to showcase some knowledge
         }
 
         [Test]
