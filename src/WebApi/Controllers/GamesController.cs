@@ -24,7 +24,7 @@ public sealed class GamesController : ControllerBase
 
     // GET: api/<GamesController>
     [HttpGet]
-    public async Task<IActionResult> Get(int offset, int limit)
+    public async Task<IActionResult> Get(int offset = 0, int limit = 2)
     {
         var gamesFromFeed = await _gameService.GetGamesFromFeed(offset, limit);
 
