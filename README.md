@@ -13,3 +13,5 @@ The Offset and Limit values currently hold the following restrictions: offset is
 For the purpose of this application whenever an invalid value is informed for Limit, 400 is the HTTP response. 
 
 For the purpose of this application whenever the request header “User-Agent” is absent, 400 is the HTTP response.
+
+Unit testing were done using NUnit and Moq.
