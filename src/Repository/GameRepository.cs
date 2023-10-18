@@ -44,8 +44,9 @@ namespace GamingApi.Repository
             ref SteamGamesResponseDTO[] steamGamesResponseDTOs) =>
             _mapper.Map<Game[]>(steamGamesResponseDTOs);
 
-        public async Task<Game[]> GetGamesFromFeed(int offset, int limit)
+        public async Task<Tuple<int, Game[]>> GetGamesFromFeed(int offset, int limit)
         {
+            int totalItemsFromFeed = 0;
             var gamesToReturn = Array.Empty<Game>();
 
             if (limit > 0)
@@ -56,6 +57,8 @@ namespace GamingApi.Repository
                 this.OrderSteamGamesResponseDTO(
                     ref rawArrayOfSteamGames
                     );
+
+                totalItemsFromFeed = rawArrayOfSteamGames.Length;
 
                 this.GetSteamGamesResponseDTOOffSetWithLimit(
                     ref rawArrayOfSteamGames,
@@ -80,7 +83,7 @@ namespace GamingApi.Repository
                     gamesToReturn;
             }
 
-            return gamesToReturn;
+            return new Tuple<int, Game[]>(totalItemsFromFeed, gamesToReturn);
         }
     }
 }

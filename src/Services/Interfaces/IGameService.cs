@@ -1,9 +1,9 @@
-﻿using GamingApi.Domain;
+﻿using GamingApi.Common.DTO;
 
 namespace GamingApi.Service.Interfaces
 {
     public interface IGameService
     {
-        Task<Game[]> GetGamesFromFeed(int offset, int limit);
+        Task<GameResponseWrapperDTO> GetGameResponseWrapperDTOFromFeed(int offset, int limit);
     }
 }

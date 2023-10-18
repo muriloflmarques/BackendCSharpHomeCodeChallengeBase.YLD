@@ -39,13 +39,11 @@ public sealed class GamesController : ControllerBase
         {
             this.CheckForUserAgentHeader();
 
-            var gamesFromFeed = await _gameService.GetGamesFromFeed(offset, limit);
-
-            var arrayToReturn = _mapper
-                .Map<GameResponseDTO[]>(gamesFromFeed);
+            var gameResponseWrapperDTO = await _gameService
+                .GetGameResponseWrapperDTOFromFeed(offset, limit);
 
             return new JsonResult(
-                new { items = arrayToReturn, totalItems = 123 },
+                gameResponseWrapperDTO,
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -54,7 +52,7 @@ public sealed class GamesController : ControllerBase
         }
         catch (Exception ex)
         {
-            //would be good to log here
+            //would be good to have and ILog here
 
             if (ex is BusinessException)
                 return BadRequest();
