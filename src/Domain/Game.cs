@@ -2,10 +2,8 @@
 {
     public class Game : BaseDomainClass
     {
-        public Game(long id) : base(id) { }
-
         public Game(
-            long id,
+            ulong id,
             string name,
             string shortDescription,
             string genre,

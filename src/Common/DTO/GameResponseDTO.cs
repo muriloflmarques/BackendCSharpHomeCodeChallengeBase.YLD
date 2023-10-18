@@ -8,12 +8,12 @@
         public string Publisher;
         public string Genre;
         public string[] Categories;
-        public PlatformsDTO Platforms;
+        public PlatformsResponseDTO Platforms;
         public string ReleaseDate;
         public uint RequiredAge;
     }
 
-    public struct PlatformsDTO
+    public struct PlatformsResponseDTO
     {
         public bool Windows;
         public bool Mac;

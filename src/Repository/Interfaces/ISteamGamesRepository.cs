@@ -1,7 +1,9 @@
-﻿namespace GamingApi.Repository.Interfaces
+﻿using GamingApi.Common.DTO;
+
+namespace GamingApi.Repository.Interfaces
 {
     public interface ISteamGamesRepository
     {
-        Task<dynamic[]> GetAllSteamGames();
+        Task<SteamGamesResponseDTO[]?> GetAllSteamGames();
     }
 }

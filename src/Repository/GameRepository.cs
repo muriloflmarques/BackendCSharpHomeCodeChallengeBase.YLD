@@ -1,43 +1,60 @@
-﻿using GamingApi.Domain;
+﻿using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using AutoMapper;
+using GamingApi.Common.DTO;
+using GamingApi.Domain;
 using GamingApi.Repository.Interfaces;
 
 namespace GamingApi.Repository
 {
     public class GameRepository : IGameRepository
     {
+        private readonly IMapper _mapper;
+
         private readonly ISteamGamesRepository _steamGamesRepository;
 
-        public GameRepository(ISteamGamesRepository steamGamesRepository)
+        public GameRepository(IMapper mapper,
+            ISteamGamesRepository steamGamesRepository)
         {
+            _mapper = mapper;
             _steamGamesRepository = steamGamesRepository;
         }
 
         public async Task<Game[]> GetGamesFromFeed(int offset, int limit)
         {
+            var gamesToReturn = Array.Empty<Game>();
+
             if (limit > 0)
             {
                 var rawArrayOfSteamGames = await this._steamGamesRepository
                     .GetAllSteamGames();
 
-                Console.WriteLine(rawArrayOfSteamGames[20]);
-
-                return rawArrayOfSteamGames
-                    //.OrderByDescending(steamGame => steamGame.releaseDate)
-                    .Skip(offset)
-                    .Take(limit)
-                    .Select(steamGame =>
-                        {
-                            return new Game(1)
+                rawArrayOfSteamGames = rawArrayOfSteamGames
+                    ?.OrderByDescending(steamGame => steamGame.ReleaseDate)
+                    ?.Skip(offset)
+                    ?.Take(limit)
+                    ?.ToArray()
+                    ??
+                    Array.Empty<SteamGamesResponseDTO>();
+#if DEBUG
+                foreach (var steamGame in rawArrayOfSteamGames)
+                {
+                    Debug.WriteLine(
+                        JsonSerializer.Serialize(steamGame,
+                            new JsonSerializerOptions()
                             {
-                                Publisher = new Publisher("aaaa"),
-                                Categories = new Category[] { new Category("aaa") },
-                                Platforms = new Platforms(false, true, false)
-                            };
-                        })
-                    .ToArray();
+                                IncludeFields = true,
+                                WriteIndented = true
+                            }));
+                }
+#endif
+                gamesToReturn = _mapper.Map<Game[]>(rawArrayOfSteamGames)
+                    ??
+                    gamesToReturn;
             }
 
-            return Array.Empty<Game>();
+            return gamesToReturn;
         }
     }
 }

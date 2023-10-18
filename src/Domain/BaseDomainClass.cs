@@ -2,9 +2,9 @@
 {
     public class BaseDomainClass
     {
-        public BaseDomainClass(long id) =>
+        public BaseDomainClass(ulong id) =>
             this.Id = id;
 
-        public long Id { get; init; }
+        public ulong Id { get; init; }
     }
 }

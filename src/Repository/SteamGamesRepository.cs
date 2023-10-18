@@ -1,5 +1,7 @@
-﻿using GamingApi.Repository.Interfaces;
+﻿using GamingApi.Common.DTO;
+using GamingApi.Repository.Interfaces;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace GamingApi.Repository
 {
@@ -7,7 +9,7 @@ namespace GamingApi.Repository
     {
         private readonly HttpClient _httpClient;
 
-        private readonly string _steamGamesFeedRequestUri =
+        private static readonly string _steamGamesFeedRequestUri =
             "steam_games_feed.json";
 
         public SteamGamesFeedRepository(HttpClient httpClient)
@@ -15,12 +17,12 @@ namespace GamingApi.Repository
             _httpClient = httpClient;
         }
 
-        public Task<dynamic[]> GetAllSteamGames()
-        {
-            return this._httpClient
-                ?.GetFromJsonAsync<dynamic[]>(requestUri: _steamGamesFeedRequestUri)
+        public Task<SteamGamesResponseDTO[]?> GetAllSteamGames() =>
+            this._httpClient
+                ?.GetFromJsonAsync<SteamGamesResponseDTO[]>(
+                    requestUri: _steamGamesFeedRequestUri,
+                    options: new JsonSerializerOptions() { IncludeFields = true })
                 ??
                 throw new Exception("Error while getting Steam games");
-        }
     }
 }

@@ -14,13 +14,12 @@ namespace Yld.GamingApi.WebApi
             CreateMap<Category[], string[]>()
                 .ConvertUsing(new ValueConverterFromCategoryArrayToStringArray());
 
-            CreateMap<Platforms, PlatformsDTO>();
+            CreateMap<Platforms, PlatformsResponseDTO>();
 
-            CreateMap<Game, GameResponseDTO>()
-            //.ForMember(dto => dto.Publisher,
-            //    game => game.MapFrom(source => source.GetArrayOfPlatforms())
-            //    )
-            ;
+            CreateMap<Game, GameResponseDTO>();
+
+            CreateMap<SteamGamesResponseDTO, Game>()
+                .ConvertUsing(new ValueConverterFromSteamGamesResponseDTOToGame());
         }
     }
 
@@ -42,5 +41,30 @@ namespace Yld.GamingApi.WebApi
             throw new Exception("Error while converting Publisher")
             :
             source.Select(category => category.Name).ToArray();
+    }
+
+    public class ValueConverterFromSteamGamesResponseDTOToGame
+        : ITypeConverter<SteamGamesResponseDTO, Game>
+    {
+        public Game Convert(SteamGamesResponseDTO source, Game destination, ResolutionContext context)
+        {
+            return new Game(
+                id: (ulong)source.AppId,
+                name: source.Name,
+                shortDescription: source.ShortDescription,
+                genre: source.Genre,
+                releaseDate: source.ReleaseDate,
+                requiredAge: (uint)source.RequiredAge,
+                publisher: new Publisher(
+                    name: source.PublisherName),
+                platforms: new Platforms(
+                    windows: source.Platforms.Windows,
+                    mac: source.Platforms.Mac,
+                    linux: source.Platforms.Linux),
+                categories: source.CategoriesNames?
+                    .Select(categoryName => new Category(name: categoryName))
+                    .ToArray() ?? Array.Empty<Category>()
+                );
+        }
     }
 }
